@@ -76,6 +76,16 @@ struct Vector<Component: LinearStructureComponent> {
 		}
 		return nil
 	}
+	
+	func innerProduct(_ lhs: Vector) -> Component {
+		var result = Component.zero
+		
+		for (idx, el) in self.enumerated() {
+			result += el * lhs[idx]
+		}
+		
+		return result
+	}
 }
 
 extension Vector {
@@ -178,24 +188,12 @@ extension Vector : Equatable {
 			return false
 		}
 		
-		for (idx, comp) in lhs.components.enumerated() {
-			if comp != rhs[idx] {
+		for (idx, el) in lhs.enumerated() {
+			if el != rhs[idx] {
 				return false
 			}
 		}
 		return true
-	}
-}
-
-extension Int {
-	mutating func intoIntegerSpace(of size: Int) {
-		self = self >= 0 ? self % size : self + size * (-self / size + 1)
-	}
-	
-	func integerSpaceRepresentation(of size: Int) -> Int {
-		var x = self
-		x.intoIntegerSpace(of: size)
-		return x
 	}
 }
 
@@ -211,12 +209,6 @@ extension Vector {
 	static func -(lhs: Vector, rhs: Vector) -> Vector {
 		return lhs + -rhs
 	}
-	
-	static func *(lhs: Vector, rhs: Vector) -> Component {
-		return zip(lhs, rhs)
-			.map { $0.0 * $0.1 }
-			.reduce(Component.zero, +)
-	}
 }
 
 func *<T>(lhs: T, rhs: Vector<T>) -> Vector<T> {
@@ -225,10 +217,4 @@ func *<T>(lhs: T, rhs: Vector<T>) -> Vector<T> {
 
 func *<T>(lhs: Vector<T>, rhs: T) -> Vector<T> {
 	return Vector(lhs.map { $0 * rhs })
-}
-
-enum Intersection<I> {
-	case none
-	case equal
-	case intersection(I)
 }

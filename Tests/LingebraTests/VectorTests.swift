@@ -203,7 +203,37 @@ class VectorTests: XCTestCase {
 			XCTAssertFalse(Vector.isLinearIndependantSet(v1, v2, v3)!)
 			XCTAssertTrue(Vector.isLinearIndependantSet(v1, v3)!)
 		}
+	}
+	
+	func testCrossProduct() {
+		let v1 = Vector<Double>.unitVector(ofDimension: 3, onAxis: 0)
+		let v2 = Vector<Double>.unitVector(ofDimension: 3, onAxis: 1)
 		
+		let x = v1.crossProduct(with: v2)
+		let y = v2.crossProduct(with: v1)
+		
+		XCTAssertEqual(x, [0, 0, 1])
+		XCTAssertEqual(y, [0, 0, -1])
+	}
+	
+	func testDescription() {
+		let v1: Vector = [1, 2, 3]
+		let v2: Vector = [2, 3, 0]
+		
+		XCTAssertEqual(v1.description, "< 1.0  2.0  3.0 >")
+		XCTAssertEqual(v2.description, "< 2.0  3.0  0.0 >")
+	}
+	
+	func testOperators() {
+		let v1: Vector = [1, 2, 3]
+		let v2: Vector = [2, 3, 0]
+		
+		XCTAssertEqual(v1 + v2, [3, 5, 3])
+		XCTAssertEqual(-v1, [-1, -2, -3])
+		XCTAssertEqual(v1 - v2, [-1, -1, 3])
+		
+		XCTAssertEqual(3 * v1, [3, 6, 9])
+		XCTAssertEqual(v1 * 3, 3 * v1)
 	}
 	
 }

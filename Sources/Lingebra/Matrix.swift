@@ -412,7 +412,7 @@ extension Matrix : Equatable {
 			
 			for k in 0..<rhs.colCount {
 				let col = rhs.col(at: k)
-				let ans = (Vector(row) * Vector(col))
+				let ans = (Vector(row).innerProduct(Vector(col)))
 				array.append(ans)
 			}
 			

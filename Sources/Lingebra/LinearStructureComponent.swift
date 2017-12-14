@@ -96,3 +96,25 @@ extension Float64 : LinearStructureComponent {
 		}
 	}
 }
+
+extension Float80 : LinearStructureComponent {
+	func inverse() -> Float80 {
+		return 1 / self
+	}
+	
+	static var zero: Float80 {
+		return 0
+	}
+	
+	static var one: Float80 {
+		return 1
+	}
+	
+	static func ==(lhs: Float80, rhs: Float80) -> Bool {
+		if lhs.isZero && rhs.isZero {
+			return true
+		} else {
+			return lhs == rhs
+		}
+	}
+}

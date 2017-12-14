@@ -1,5 +1,3 @@
 # Lingebra
 
-A description of this package.
-
-
+A collection of structures representing linear algebra abstractions.

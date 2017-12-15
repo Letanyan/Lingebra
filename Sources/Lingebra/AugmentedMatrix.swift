@@ -160,8 +160,8 @@ struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConver
 	
 	func solutionExists() -> Bool {
 		let rref = matrix.reducedRowEchelonForm()
-		let a = rref.variablePart()
-		let x = rref.resultPart()
+		let a = rref.coefficientsMatrix()
+		let x = rref.constantsColoumn()
 		
 		for (idx, row) in a.rows().enumerated() {
 			let v = Vector(row)
@@ -175,8 +175,8 @@ struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConver
 	func solution() -> Solution<Component> {
 		let rref = matrix.reducedRowEchelonForm()
 		
-		let a = rref.variablePart()
-		let x = rref.resultPart()
+		let a = rref.coefficientsMatrix()
+		let x = rref.constantsColoumn()
 		
 		guard solutionExists() else {
 			return .none

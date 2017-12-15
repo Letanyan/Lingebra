@@ -113,7 +113,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return AugmentedMatrix(matrix: self, result: vector)
 	}
 	
-	func variablePart() -> Matrix {
+	func coefficientsMatrix() -> Matrix {
 		var result = [Component]()
 		
 		var cnt = 0
@@ -129,7 +129,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(array: result, colCount: colCount - 1)
 	}
 
-	func resultPart() -> Vector<Component> {
+	func constantsColoumn() -> Vector<Component> {
 		var result = [Component]()
 		
 		var cnt = 0

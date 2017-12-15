@@ -158,7 +158,7 @@ struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConver
 	}
 	
 	
-	func valid() -> Bool {
+	func solutionExists() -> Bool {
 		let rref = matrix.reducedRowEchelonForm()
 		let a = rref.variablePart()
 		let x = rref.resultPart()
@@ -178,7 +178,7 @@ struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConver
 		let a = rref.variablePart()
 		let x = rref.resultPart()
 		
-		guard valid() else {
+		guard solutionExists() else {
 			return .none
 		}
 		

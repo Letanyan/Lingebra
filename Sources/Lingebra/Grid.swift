@@ -57,7 +57,7 @@ extension Grid {
 	}
 	
 	func cell(from linearPosition: Int) -> Cell? {
-		return cell(from: gridCoordinate(from: linearPosition))
+		return cells[linearPosition]
 	}
 	
 	//MARK: -Get Vectors

@@ -7,22 +7,22 @@
 
 import Swift
 
-func expand<T>(array: [T], with colCount: Int) -> [[T]] {
-	var flipper = 0
-	var row = [T]()
-	var result = [[T]]()
-	
-	for e in array {
-		row.append(e)
-		
-		flipper += 1
-		if flipper % colCount == 0 {
-			result.append(row)
-			row.removeAll(keepingCapacity: false)
-		}
-	}
-	return result
-}
+//func expand<T>(array: [T], with colCount: Int) -> [[T]] {
+//	var flipper = 0
+//	var row = [T]()
+//	var result = [[T]]()
+//
+//	for e in array {
+//		row.append(e)
+//
+//		flipper += 1
+//		if flipper % colCount == 0 {
+//			result.append(row)
+//			row.removeAll(keepingCapacity: false)
+//		}
+//	}
+//	return result
+//}
 
 struct Matrix<Component: LinearStructureComponent> : Grid {
 	typealias Cell = Component
@@ -77,26 +77,36 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 	}
 	
 	//MARK:- Get Matrix
-	func rowMatrix(from index: Int) -> Matrix {
+	func rowMatrix(at index: Int) -> Matrix {
 		return Matrix(rows: [row(at: index)])
 	}
 	
-	func colMatrix(from index: Int) -> Matrix {
+	func colMatrix(at index: Int) -> Matrix {
 		return Matrix(array: col(at: index), colCount: 1)
 	}
 	
-	func identitySized(row: Int, col: Int) -> Matrix {
+	static func rectangularIdentityMatrix(ofRowSize n: Int, andColSize m: Int) -> Matrix {
 		var result = [[Component]]()
-		for i in 0..<row {
-			var r = [Component](repeating: Component.zero, count: col)
-			if i < col { r[i] = Component.one }
+		for i in 0..<n {
+			var r = [Component](repeating: Component.zero, count: m)
+			if i < m { r[i] = Component.one }
+			result.append(r)
+		}
+		return Matrix(rows: result)
+	}
+	
+	static func identityMatrix(ofSize n: Int) -> Matrix {
+		var result = [[Component]]()
+		for i in 0..<n {
+			var r = [Component](repeating: .zero, count: n)
+			r[i] = Component.one
 			result.append(r)
 		}
 		return Matrix(rows: result)
 	}
 	
 	func isIdentity() -> Bool {
-		return self == identitySized(row: rowCount, col: colCount)
+		return self == .rectangularIdentityMatrix(ofRowSize: rowCount, andColSize: colCount)
 	}
 	
 	func augmented(with vector: Vector<Component>) -> AugmentedMatrix<Component> {
@@ -381,7 +391,7 @@ extension Matrix : CustomStringConvertible {
 //Operators
 extension Matrix : Equatable {
 	static func ==(lhs: Matrix, rhs: Matrix) -> Bool {
-		return lhs.cells == rhs.cells
+		return lhs.colCount == rhs.colCount && lhs.cells == rhs.cells
 	}
 	
 	static func +(lhs: Matrix, rhs: Matrix) -> Matrix {
@@ -440,4 +450,12 @@ func *<Component>(lhs: Component, rhs: Matrix<Component>) -> Matrix<Component> {
 	}
 	
 	return array
+}
+
+extension Matrix : ExpressibleByArrayLiteral {
+	typealias ArrayLiteralElement = [Component]
+	
+	init(arrayLiteral elements: [Component]...) {
+		self = Matrix(rows: elements)
+	}
 }

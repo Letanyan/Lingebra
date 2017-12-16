@@ -308,22 +308,25 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 	}
 	
 	private func sortedIntoRowEchelonForm() -> (changed: Bool, Matrix) {
+		var result = self
 		var swapped = false
-		let rs = rows().sorted { a, b in
-			let va = Vector(a)
-			let vb = Vector(b)
+		for i in 0..<result.rowCount {
+			guard let (idx, row) = result.rows()
+				.enumerated()
+				.first(where: {
+					Vector($0.1).firstNonZeroIndex() ?? -1 == i
+				}) else {
+					continue
+			}
 			
-			let ai = va.firstNonZeroIndex() ?? -1
-			let bi = vb.firstNonZeroIndex() ?? -1
-			
-			let r = ai < bi
-			
-			swapped = r ? !swapped : swapped
-			
-			return r
+			if idx != i {
+				result = result.replace(row: idx, with: Vector(result.row(at: i)))
+				result = result.replace(row: i, with: Vector(row))
+				swapped = !swapped
+			}
 		}
 		
-		return (swapped, Matrix(rows: rs))
+		return (swapped, result)
 	}
 	
 	private func rowEchelonFormWithChanges() -> (changed: Bool, Matrix) {
@@ -353,23 +356,6 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 			let (s, r) = result.sortedIntoRowEchelonForm()
 			result = r
 			flip = s ? !flip : flip
-			print(result)
-		}
-		
-		for i in 0..<result.rowCount {
-			guard let (idx, row) = result.rows()
-				.enumerated()
-				.first(where: {
-					Vector($0.1).firstNonZeroIndex() ?? -1 == i
-				}) else {
-					continue
-			}
-			
-			if idx != i {
-				result = result.replace(row: idx, with: Vector(result.row(at: i)))
-				result = result.replace(row: i, with: Vector(row))
-				flip = !flip
-			}
 		}
 		
 		return (flip, result)

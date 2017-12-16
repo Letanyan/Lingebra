@@ -411,9 +411,9 @@ class MatrixTests: XCTestCase {
 		let r7: [Double] = [08, 09, 10, 01, 02, 03, 04, 05, 06, 07]
 		let r8: [Double] = [09, 10, 01, 02, 03, 04, 05, 06, 07, 08]
 		let r9: [Double] = [10, 01, 02, 03, 04, 05, 06, 07, 08, 09]
-		
+
 		let m = Matrix(rows: [r0, r1, r2, r3, r4, r5, r6, r7, r8, r9])
-		
+
 		measure {
 			XCTAssertTrue(m.determinateValue() ~~ -5500000000.0)
 		}

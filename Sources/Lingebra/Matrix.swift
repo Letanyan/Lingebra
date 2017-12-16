@@ -7,23 +7,6 @@
 
 import Swift
 
-//func expand<T>(array: [T], with colCount: Int) -> [[T]] {
-//	var flipper = 0
-//	var row = [T]()
-//	var result = [[T]]()
-//
-//	for e in array {
-//		row.append(e)
-//
-//		flipper += 1
-//		if flipper % colCount == 0 {
-//			result.append(row)
-//			row.removeAll(keepingCapacity: false)
-//		}
-//	}
-//	return result
-//}
-
 struct Matrix<Component: LinearStructureComponent> : Grid {
 	typealias Cell = Component
 	
@@ -113,16 +96,38 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return AugmentedMatrix(matrix: self, result: vector)
 	}
 	
+	func splitMatrix(atIndex index: Int) -> (left: Matrix, right: Matrix) {
+		var left = [Component]()
+		var right = [Component]()
+		
+		var count = 0
+		for cell in cells {
+			if count < index {
+				left.append(cell)
+			} else if count < colCount {
+				right.append(cell)
+			} else {
+				count = 0
+				left.append(cell)
+			}
+			count += 1
+		}
+		
+		let l = Matrix(array: left, colCount: index)
+		let r = Matrix(array: right, colCount: colCount - index)
+		return (l, r)
+	}
+	
 	func coefficientsMatrix() -> Matrix {
 		var result = [Component]()
 		
-		var cnt = 0
+		var count = 0
 		for cell in cells {
-			if cnt < colCount - 1 {
+			if count < colCount - 1 {
 				result.append(cell)
-				cnt += 1
+				count += 1
 			} else {
-				cnt = 0
+				count = 0
 			}
 		}
 		
@@ -153,16 +158,16 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 			let coord_ = gridCoordinate(from: i)
 			
 			if coord.row != coord_.row && coord.col != coord_.col {
-				let e = cell(from: coord_)
-				array.append(e ?? .zero)
+				let e = cells[i]
+				array.append(e)
 			}
 		}
 		
 		return Matrix(array: array, colCount: colCount - 1)
 	}
 	
-	func minor(at row: Int, and col: Int) -> Matrix {
-		return minor(at: GridCoordinate(col: col, row: row))
+	func minor(atRow row: Int, andCol col: Int) -> Matrix {
+		return minor(at: GridCoordinate(row: row, col: col))
 	}
 	
 	func minor(at linearPosition: Int) -> Matrix {

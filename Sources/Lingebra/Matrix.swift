@@ -195,6 +195,16 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(array: new, colCount: colCount)
 	}
 	
+	public func swapRows(at idxa: Int, and idxb: Int) -> Matrix {
+		var result = self
+		let a = Vector(result.row(at: idxa))
+		let b = Vector(result.row(at: idxb))
+		result = result.replace(row: idxa, with: b)
+		result = result.replace(row: idxb, with: a)
+		
+		return result
+	}
+	
 	//MARK:- Arithmetic
 	public static func determinateValue(of matrix: Matrix) -> Component {
 		var result = Component.zero
@@ -297,7 +307,26 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Vector(result)
 	}
 	
-	private func rowEchelonFormWithChanges() -> (Bool, Matrix) {
+	private func sortedIntoRowEchelonForm() -> (changed: Bool, Matrix) {
+		var swapped = false
+		let rs = rows().sorted { a, b in
+			let va = Vector(a)
+			let vb = Vector(b)
+			
+			let ai = va.firstNonZeroIndex() ?? -1
+			let bi = vb.firstNonZeroIndex() ?? -1
+			
+			let r = ai < bi
+			
+			swapped = r ? !swapped : swapped
+			
+			return r
+		}
+		
+		return (swapped, Matrix(rows: rs))
+	}
+	
+	private func rowEchelonFormWithChanges() -> (changed: Bool, Matrix) {
 		var result = self
 		var flip = false
 		
@@ -312,7 +341,7 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 				continue
 			}
 			
-			for n in (r + 1)...(result.rowCount - 1) {
+			for n in (r + 1)..<result.rowCount {
 				let g = Vector(result.row(at: n))
 				guard g != g.zero, g[r] != .zero, f[r] != .zero else {
 					continue
@@ -320,6 +349,11 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 				let a = g[r] / f[r]
 				result = result.replace(row: n, with: g - a * f)
 			}
+			
+			let (s, r) = result.sortedIntoRowEchelonForm()
+			result = r
+			flip = s ? !flip : flip
+			print(result)
 		}
 		
 		for i in 0..<result.rowCount {
@@ -342,48 +376,7 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 	}
 	
 	public func rowEchelonForm() -> Matrix {
-		var result = self
-		
-		for r in 0..<result.rowCount - 1 {
-			guard r < result.colCount else {
-				break
-			}
-			
-			let f = Vector(result.row(at: r))
-			
-			guard f != f.zero else {
-				continue
-			}
-			
-			for n in (r + 1)...(result.rowCount - 1) {
-				//			for n in 0...(result.rowCount - 1) {
-				//				guard n != r else {
-				//					continue
-				//				}
-				let g = Vector(result.row(at: n))
-				guard g != g.zero, g[r] != .zero, f[r] != .zero else {
-					continue
-				}
-				let a = f[r] / g[r]
-				result = result.replace(row: n, with: f - (a * g))
-				//				print(a)
-				//				print(result)
-			}
-		}
-		
-		for i in 0..<result.rowCount {
-			guard let (idx, row) = result.rows().enumerated()
-				.first(where: { Vector($0.1).firstNonZeroIndex() ?? -1 == i }) else {
-					continue
-			}
-			
-			if idx != i {
-				result = result.replace(row: idx, with: Vector(result.row(at: i)))
-				result = result.replace(row: i, with: Vector(row))
-			}
-		}
-		
-		return result
+		return rowEchelonFormWithChanges().1
 	}
 	
 	public func reducedRowEchelonForm() -> Matrix {

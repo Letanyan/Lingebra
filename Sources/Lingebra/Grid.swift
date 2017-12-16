@@ -8,7 +8,7 @@
 import Swift
 
 struct GridCoordinate {
-	var col, row: Int
+	var row, col: Int
 }
 
 protocol Grid {
@@ -20,7 +20,7 @@ protocol Grid {
 	var count: Int { get }
 	
 	//MARK: -Conversion
-	func linearPosition(fromCol col: Int, andRow row: Int) -> Int
+	func linearPosition(fromRow row: Int, andCol col: Int) -> Int
 	func gridCoordinate(from linearPosition: Int) -> GridCoordinate
 	
 	//MARK: -Get Element
@@ -39,21 +39,21 @@ protocol Grid {
 
 extension Grid {
 	//MARK: -Conversion
-	func linearPosition(fromCol col: Int, andRow row: Int) -> Int {
+	func linearPosition(fromRow row: Int, andCol col: Int) -> Int {
 		return (row - 1) * colCount * (col - 1)
 	}
 	
 	func gridCoordinate(from linearPosition: Int) -> GridCoordinate {
-		return GridCoordinate(col: linearPosition % colCount, row: linearPosition / colCount)
+		return GridCoordinate(row: linearPosition / colCount, col: linearPosition % colCount)
 	}
 	
 	//MARK: -Get Element
 	func cell(from coord: GridCoordinate) -> Cell? {
-		return cells[linearPosition(fromCol: coord.col, andRow: coord.row)]
+		return cells[linearPosition(fromRow: coord.row, andCol: coord.col)]
 	}
 	
 	func cell(in row: Int, and col: Int) -> Cell? {
-		return cell(from: GridCoordinate(col: col, row: row))
+		return cell(from: GridCoordinate(row: row, col: col))
 	}
 	
 	func cell(from linearPosition: Int) -> Cell? {
@@ -107,6 +107,6 @@ extension Grid {
 	}
 	
 	subscript(row: Int, col: Int) -> Cell {
-		return cells[linearPosition(fromCol: col, andRow: row)]
+		return cells[linearPosition(fromRow: row, andCol: col)]
 	}
 }

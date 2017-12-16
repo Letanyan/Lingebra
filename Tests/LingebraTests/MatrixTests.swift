@@ -21,6 +21,12 @@ func ==<T: Equatable>(lhs: [[T]], rhs: [[T]]) -> Bool {
 	return true
 }
 
+infix operator ~~ : ComparisonPrecedence
+
+func ~~(lhs: Double, rhs: Double) -> Bool {
+	return abs(lhs - rhs) < 0.000001
+}
+
 class MatrixTests: XCTestCase {
 	func testInits() {
 		let xs: [[Double]] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
@@ -304,5 +310,115 @@ class MatrixTests: XCTestCase {
 		XCTAssertTrue(z11 == [[1, 3, 4]])
 		XCTAssertTrue(z12 == [[1, 2, 4]])
 		XCTAssertTrue(z13 == [[1, 2, 3]])
+	}
+	
+	func testReplaceColoumn() {
+		let xs: Matrix<Double> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+		let ys: Matrix<Double> = [[1, 2], [3, 4], [5, 6], [7, 8]]
+		let zs: Matrix<Double> = [[1, 2, 3, 4], [5, 6, 7, 8]]
+		
+		let x0 = xs.replace(coloumn: 0, with: [0, 0, 0])
+		let x1 = xs.replace(coloumn: 1, with: [0, 0, 0])
+		let x2 = xs.replace(coloumn: 2, with: [0, 0, 0])
+
+		let y0 = ys.replace(coloumn: 0, with: [0, 0, 0, 0])
+		let y1 = ys.replace(coloumn: 1, with: [0, 0, 0, 0])
+
+		let z0 = zs.replace(coloumn: 0, with: [0, 0])
+		let z1 = zs.replace(coloumn: 1, with: [0, 0])
+		let z2 = zs.replace(coloumn: 2, with: [0, 0])
+		let z3 = zs.replace(coloumn: 3, with: [0, 0])
+		
+		XCTAssertTrue(x0 == [[0, 2, 3], [0, 5, 6], [0, 8, 9]])
+		XCTAssertTrue(x1 == [[1, 0, 3], [4, 0, 6], [7, 0, 9]])
+		XCTAssertTrue(x2 == [[1, 2, 0], [4, 5, 0], [7, 8, 0]])
+
+		XCTAssertTrue(y0 == [[0, 2], [0, 4], [0, 6], [0, 8]])
+		XCTAssertTrue(y1 == [[1, 0], [3, 0], [5, 0], [7, 0]])
+
+		XCTAssertTrue(z0 == [[0, 2, 3, 4], [0, 6, 7, 8]])
+		XCTAssertTrue(z1 == [[1, 0, 3, 4], [5, 0, 7, 8]])
+		XCTAssertTrue(z2 == [[1, 2, 0, 4], [5, 6, 0, 8]])
+		XCTAssertTrue(z3 == [[1, 2, 3, 0], [5, 6, 7, 0]])
+	}
+	
+	func testReplaceRow() {
+		let xs: Matrix<Double> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+		let ys: Matrix<Double> = [[1, 2], [3, 4], [5, 6], [7, 8]]
+		let zs: Matrix<Double> = [[1, 2, 3, 4], [5, 6, 7, 8]]
+		
+		let x0 = xs.replace(row: 0, with: [0, 0, 0])
+		let x1 = xs.replace(row: 1, with: [0, 0, 0])
+		let x2 = xs.replace(row: 2, with: [0, 0, 0])
+		
+		let y0 = ys.replace(row: 0, with: [0, 0])
+		let y1 = ys.replace(row: 1, with: [0, 0])
+		let y2 = ys.replace(row: 2, with: [0, 0])
+		let y3 = ys.replace(row: 3, with: [0, 0])
+		
+		let z0 = zs.replace(row: 0, with: [0, 0, 0, 0])
+		let z1 = zs.replace(row: 1, with: [0, 0, 0, 0])
+		
+		XCTAssertTrue(x0 == [[0, 0, 0], [4, 5, 6], [7, 8, 9]])
+		XCTAssertTrue(x1 == [[1, 2, 3], [0, 0, 0], [7, 8, 9]])
+		XCTAssertTrue(x2 == [[1, 2, 3], [4, 5, 6], [0, 0, 0]])
+		
+		XCTAssertTrue(y0 == [[0, 0], [3, 4], [5, 6], [7, 8]])
+		XCTAssertTrue(y1 == [[1, 2], [0, 0], [5, 6], [7, 8]])
+		XCTAssertTrue(y2 == [[1, 2], [3, 4], [0, 0], [7, 8]])
+		XCTAssertTrue(y3 == [[1, 2], [3, 4], [5, 6], [0, 0]])
+		
+		XCTAssertTrue(z0 == [[0, 0, 0, 0], [5, 6, 7, 8]])
+		XCTAssertTrue(z1 == [[1, 2, 3, 4], [0, 0, 0, 0]])
+	}
+	
+	func testDeterminate() {
+		let xs: Matrix<Double> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+		
+		let x00 = xs.minor(atRow: 0, andCol: 0).determinateValue()
+		let x01 = xs.minor(atRow: 0, andCol: 1).determinateValue()
+		let x02 = xs.minor(atRow: 0, andCol: 2).determinateValue()
+		
+		let x10 = xs.minor(atRow: 1, andCol: 0).determinateValue()
+		let x11 = xs.minor(atRow: 1, andCol: 1).determinateValue()
+		let x12 = xs.minor(atRow: 1, andCol: 2).determinateValue()
+		
+		let x20 = xs.minor(atRow: 2, andCol: 0).determinateValue()
+		let x21 = xs.minor(atRow: 2, andCol: 1).determinateValue()
+		let x22 = xs.minor(atRow: 2, andCol: 2).determinateValue()
+		
+		XCTAssertTrue(x00 ~~ -3)
+		XCTAssertEqual(x01, -6)
+		XCTAssertEqual(x02, -3)
+		
+		XCTAssertEqual(x10, -6)
+		XCTAssertEqual(x11, -12)
+		XCTAssertEqual(x12, -6)
+		
+		XCTAssertEqual(x20, -3)
+		XCTAssertEqual(x21, -6)
+		XCTAssertEqual(x22, -3)
+		
+		XCTAssertEqual(xs.determinateValue(), 0)
+		
+		let r0: [Double] = [01, 02, 03, 04, 05, 06, 07, 08, 09, 10]
+		let r1: [Double] = [02, 03, 04, 05, 06, 07, 08, 09, 10, 01]
+		let r2: [Double] = [03, 04, 05, 06, 07, 08, 09, 10, 01, 02]
+		let r3: [Double] = [04, 05, 06, 07, 08, 09, 10, 01, 02, 03]
+		let r4: [Double] = [05, 06, 07, 08, 09, 10, 01, 02, 03, 04]
+		let r5: [Double] = [06, 07, 08, 09, 10, 01, 02, 03, 04, 05]
+		let r6: [Double] = [07, 08, 09, 10, 01, 02, 03, 04, 05, 06]
+		let r7: [Double] = [08, 09, 10, 01, 02, 03, 04, 05, 06, 07]
+		let r8: [Double] = [09, 10, 01, 02, 03, 04, 05, 06, 07, 08]
+		let r9: [Double] = [10, 01, 02, 03, 04, 05, 06, 07, 08, 09]
+		
+		let m = Matrix(rows: [r0, r1, r2, r3, r4, r5, r6, r7, r8, r9])
+		
+		measure {
+			print(m.rowEchelonForm())
+			print(m.determinateValue())
+			XCTAssertTrue(m.determinateValue() ~~ -5500000000.0)
+		}
+		
 	}
 }

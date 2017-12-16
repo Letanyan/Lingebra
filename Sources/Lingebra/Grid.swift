@@ -25,14 +25,14 @@ public protocol Grid {
 	
 	//MARK: -Get Element
 	func cell(from coord: GridCoordinate) -> Cell?
-	func cell(in row: Int, and col: Int) -> Cell?
+	func cell(inRow row: Int, andCol col: Int) -> Cell?
 	func cell(from linearPosition: Int) -> Cell?
 	
 	//MARK: -Get Vectors
 	func row(at index: Int) -> [Cell]
 	func col(at index: Int) -> [Cell]
 	
-	subscript(row: Int) -> [Cell] { get }
+	subscript(row row: Int) -> [Cell] { get }
 	subscript(col col: Int) -> [Cell] { get }
 	subscript(row: Int, col: Int) -> Cell { get }
 }
@@ -40,7 +40,7 @@ public protocol Grid {
 extension Grid {
 	//MARK: -Conversion
 	public func linearPosition(fromRow row: Int, andCol col: Int) -> Int {
-		return (row - 1) * colCount * (col - 1)
+		return row * colCount + col
 	}
 	
 	public func gridCoordinate(from linearPosition: Int) -> GridCoordinate {
@@ -52,8 +52,8 @@ extension Grid {
 		return cells[linearPosition(fromRow: coord.row, andCol: coord.col)]
 	}
 	
-	public func cell(in row: Int, and col: Int) -> Cell? {
-		return cell(from: GridCoordinate(row: row, col: col))
+	public func cell(inRow row: Int, andCol col: Int) -> Cell? {
+		return cells[linearPosition(fromRow: row, andCol: col)]
 	}
 	
 	public func cell(from linearPosition: Int) -> Cell? {
@@ -98,7 +98,7 @@ extension Grid {
 		return result
 	}
 	
-	public subscript(row: Int) -> [Cell] {
+	public subscript(row row: Int) -> [Cell] {
 		return self.row(at: row)
 	}
 	

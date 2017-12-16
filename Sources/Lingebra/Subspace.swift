@@ -7,18 +7,18 @@
 
 import Swift
 
-struct Subspace<Component: LinearStructureComponent> {
-	var directions: [Vector<Component>]
+public struct Subspace<Component: LinearStructureComponent> {
+	public var directions: [Vector<Component>]
 	
-	init(_ directions: Vector<Component>...) {
+	public init(_ directions: Vector<Component>...) {
 		self.directions = directions.filter { $0 != $0.zero }
 	}
 	
-	init(directions: [Vector<Component>]) {
+	public init(directions: [Vector<Component>]) {
 		self.directions = directions.filter { $0 != $0.zero }
 	}
 	
-	func basis() -> [Vector<Component>] {
+	public func basis() -> [Vector<Component>] {
 		let m = Matrix(rows: directions.map(Array.init)).rowEchelonForm()
 		
 		let rs = m.rows().filter({ Vector($0) != Vector($0).zero })
@@ -28,13 +28,13 @@ struct Subspace<Component: LinearStructureComponent> {
 }
 
 extension Subspace : CustomStringConvertible {
-	var description: String {
+	public var description: String {
 		return "span" + directions.description
 	}
 }
 
 extension Matrix {
-	func rowSpace() -> Subspace<Component> {
+	public func rowSpace() -> Subspace<Component> {
 		let m = rowEchelonForm()
 		let rs = m.rows().filter({ Vector($0) != Vector($0).zero })
 		let vs = rs.map(Vector.init)
@@ -42,7 +42,7 @@ extension Matrix {
 		return Subspace(directions: vs)
 	}
 
-	func colSpace() -> Subspace<Component> {
+	public func colSpace() -> Subspace<Component> {
 		let src = reducedRowEchelonForm()
 
 		var result = [[Component]]()
@@ -59,26 +59,26 @@ extension Matrix {
 	}
 }
 
-struct OffsetSubspace<Component: LinearStructureComponent> : CustomStringConvertible {
-	var subspace: Subspace<Component>
-	var offset: Vector<Component>
+public struct OffsetSubspace<Component: LinearStructureComponent> : CustomStringConvertible {
+	public var subspace: Subspace<Component>
+	public var offset: Vector<Component>
 	
-	init(subspace: Subspace<Component>, offset: Vector<Component>) {
+	public init(subspace: Subspace<Component>, offset: Vector<Component>) {
 		(self.subspace, self.offset) = (subspace, offset)
 	}
 	
-	var description: String {
+	public var description: String {
 		return "\(offset) + \(subspace)"
 	}
 	
-	var augmentedMatrix: AugmentedMatrix<Component> {
+	public var augmentedMatrix: AugmentedMatrix<Component> {
 		let rs = subspace.directions.map{ $0.components }
 		let m = Matrix(rows: rs).adjugate()
 		
 		return AugmentedMatrix(matrix: m, result: offset)
 	}
 	
-	func intersection(with space: OffsetSubspace<Component>) -> Solution<Component> {
+	public func intersection(with space: OffsetSubspace<Component>) -> Solution<Component> {
 		let solutionSpace = (self - space).augmentedMatrix.solution()
 		
 		switch solutionSpace {
@@ -120,7 +120,7 @@ struct OffsetSubspace<Component: LinearStructureComponent> : CustomStringConvert
 		}
 	}
 	
-	static func -(lhs: OffsetSubspace<Component>, rhs: OffsetSubspace<Component>) -> OffsetSubspace<Component> {
+	public static func -(lhs: OffsetSubspace<Component>, rhs: OffsetSubspace<Component>) -> OffsetSubspace<Component> {
 		let o = lhs.offset - rhs.offset
 		
 		let l = lhs.subspace.directions

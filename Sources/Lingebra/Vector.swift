@@ -1,65 +1,65 @@
 import Swift
 
-struct Vector<Component: LinearStructureComponent> {
-	var components: [Component]
+public struct Vector<Component: LinearStructureComponent> {
+	public var components: [Component]
 	
-	init(_ values: [Component]) {
+	public init(_ values: [Component]) {
 		self.components = values
 	}
 	
-	init(x: Component, y: Component) {
+	public init(x: Component, y: Component) {
 		components = [x, y]
 	}
 	
-	init(x: Component, y: Component, z: Component) {
+	public init(x: Component, y: Component, z: Component) {
 		components = [x, y, z]
 	}
 	
-	init(_ values: Component...) {
+	public init(_ values: Component...) {
 		self.components = values
 	}
 	
-	var x: Component {
+	public var x: Component {
 		return self[0]
 	}
 	
-	var y: Component {
+	public var y: Component {
 		return self[1]
 	}
 	
-	var z: Component {
+	public var z: Component {
 		return self[2]
 	}
 	
-	static func unitVector(ofDimension dimension: Int, onAxis axis: Int) -> Vector {
+	public static func unitVector(ofDimension dimension: Int, onAxis axis: Int) -> Vector {
 		var resultArray = [Component](repeating: Component.zero, count: dimension)
 		resultArray[axis] = Component.one
 		return Vector(resultArray)
 	}
 	
-	func unitVector(onAxis axis: Int) -> Vector {
+	public func unitVector(onAxis axis: Int) -> Vector {
 		var resultArray = [Component](repeating: Component.zero, count: dimension)
 		resultArray[axis] = Component.one
 		return Vector(resultArray)
 	}
 	
-	static func zeroVector(ofDimension dimension: Int) -> Vector {
+	public static func zeroVector(ofDimension dimension: Int) -> Vector {
 		return Vector([Component](repeating: .zero, count: dimension))
 	}
 	
-	var zero: Vector {
+	public var zero: Vector {
 		return Vector([Component](repeating: Component.zero, count: dimension))
 	}
 	
-	var norm: Component {
+	public var norm: Component {
 		return components.reduce(Component.zero){ $0 + $1 * $1 }.squareRoot()
 	}
 	
-	var dimension: Int {
+	public var dimension: Int {
 		return components.count
 	}
 	
-	func firstNonZero() -> Component? {
+	public func firstNonZero() -> Component? {
 		for value in components {
 			if value != Component.zero {
 				return value
@@ -68,7 +68,7 @@ struct Vector<Component: LinearStructureComponent> {
 		return nil
 	}
 	
-	func firstNonZeroIndex() -> Int? {
+	public func firstNonZeroIndex() -> Int? {
 		for value in components {
 			if value != Component.zero {
 				return index(of: value)
@@ -77,7 +77,7 @@ struct Vector<Component: LinearStructureComponent> {
 		return nil
 	}
 	
-	func innerProduct(_ lhs: Vector) -> Component {
+	public func innerProduct(_ lhs: Vector) -> Component {
 		var result = Component.zero
 		
 		for (idx, el) in self.enumerated() {
@@ -89,7 +89,7 @@ struct Vector<Component: LinearStructureComponent> {
 }
 
 extension Vector {
-	func isParallel(to vector: Vector) -> Bool {
+	public func isParallel(to vector: Vector) -> Bool {
 		guard vector.dimension == dimension else {
 			return false
 		}
@@ -107,7 +107,7 @@ extension Vector {
 		return true
 	}
 	
-	static func isLinearIndependantSet(_ vs: Vector...) -> Bool? {
+	public static func isLinearIndependantSet(_ vs: Vector...) -> Bool? {
 		guard let fv = vs.first else {
 			return true
 		}
@@ -130,7 +130,7 @@ extension Vector {
 		return p == p.zero
 	}
 	
-	func crossProduct(with v: Vector) -> Vector? {
+	public func crossProduct(with v: Vector) -> Vector? {
 		guard v.dimension == 3 && dimension == 3 else {
 			return nil
 		}
@@ -144,34 +144,34 @@ extension Vector {
 }
 
 extension Vector : RandomAccessCollection {
-	typealias Index = Int
-	var startIndex: Index {
+	public typealias Index = Int
+	public var startIndex: Index {
 		return components.startIndex
 	}
 	
-	var endIndex: Index {
+	public var endIndex: Index {
 		return components.endIndex
 	}
 	
-	subscript(index: Index) -> Component {
+	public subscript(index: Index) -> Component {
 		return components[index]
 	}
 	
-	func index(after: Index) -> Index {
+	public func index(after: Index) -> Index {
 		return after + 1
 	}
 }
 
 extension Vector : ExpressibleByArrayLiteral {
-	typealias Element = Component
+	public typealias Element = Component
 	
-	init(arrayLiteral: Component...) {
+	public init(arrayLiteral: Component...) {
 		components = arrayLiteral
 	}
 }
 
 extension Vector : CustomStringConvertible {
-	var description: String {
+	public var description: String {
 		return "< " + reduce(""){ (t: String, e: Component) -> String in
 			if t == "" {
 				return "\(e)"
@@ -183,7 +183,7 @@ extension Vector : CustomStringConvertible {
 }
 
 extension Vector : Equatable {
-	static func ==(lhs: Vector, rhs: Vector) -> Bool {
+	public static func ==(lhs: Vector, rhs: Vector) -> Bool {
 		guard lhs.count == rhs.count else {
 			return false
 		}
@@ -198,23 +198,23 @@ extension Vector : Equatable {
 }
 
 extension Vector {
-	static func +(lhs: Vector, rhs: Vector) -> Vector {
+	public static func +(lhs: Vector, rhs: Vector) -> Vector {
 		return Vector(zip(lhs, rhs).map { $0.0 + $0.1 })
 	}
 	
-	static prefix func -(operand: Vector) -> Vector {
+	public static prefix func -(operand: Vector) -> Vector {
 		return Vector(operand.map { -$0 })
 	}
 	
-	static func -(lhs: Vector, rhs: Vector) -> Vector {
+	public static func -(lhs: Vector, rhs: Vector) -> Vector {
 		return lhs + -rhs
 	}
 }
 
-func *<T>(lhs: T, rhs: Vector<T>) -> Vector<T> {
+public func *<T>(lhs: T, rhs: Vector<T>) -> Vector<T> {
 	return Vector(rhs.map { $0 * lhs })
 }
 
-func *<T>(lhs: Vector<T>, rhs: T) -> Vector<T> {
+public func *<T>(lhs: Vector<T>, rhs: T) -> Vector<T> {
 	return Vector(lhs.map { $0 * rhs })
 }

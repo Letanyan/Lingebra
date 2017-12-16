@@ -7,7 +7,7 @@
 
 import Swift
 
-protocol LinearStructureComponent : Comparable, SignedNumeric {
+public protocol LinearStructureComponent : Comparable, SignedNumeric {
 	static func +(lhs: Self, rhs: Self) -> Self
 	static func -(lhs: Self, rhs: Self) -> Self
 	static func *(lhs: Self, rhs: Self) -> Self
@@ -28,41 +28,41 @@ protocol LinearStructureComponent : Comparable, SignedNumeric {
 }
 
 extension LinearStructureComponent {
-	static func -(lhs: Self, rhs: Self) -> Self {
+	public static func -(lhs: Self, rhs: Self) -> Self {
 		return lhs + -rhs
 	}
 	
-	static func /(lhs: Self, rhs: Self) -> Self {
+	public static func /(lhs: Self, rhs: Self) -> Self {
 		return lhs * rhs.inverse()
 	}
 	
-	static func +=(lhs: inout Self, rhs: Self) {
+	public static func +=(lhs: inout Self, rhs: Self) {
 		lhs = lhs + rhs
 	}
 	
-	static func -=(lhs: inout Self, rhs: Self) {
+	public static func -=(lhs: inout Self, rhs: Self) {
 		lhs = lhs - rhs
 	}
 	
-	static func *=(lhs: inout Self, rhs: Self) {
+	public static func *=(lhs: inout Self, rhs: Self) {
 		lhs = lhs * rhs
 	}
 	
-	static func /=(lhs: inout Self, rhs: Self) {
+	public static func /=(lhs: inout Self, rhs: Self) {
 		lhs = lhs * rhs
 	}
 }
 
 extension Float32 : LinearStructureComponent {
-	func inverse() -> Float32 {
+	public func inverse() -> Float32 {
 		return 1 / self
 	}
 	
-	static var zero: Float32 {
+	public static var zero: Float32 {
 		return 0
 	}
 	
-	static var one: Float32 {
+	public static var one: Float32 {
 		return 1
 	}
 	
@@ -76,15 +76,15 @@ extension Float32 : LinearStructureComponent {
 }
 
 extension Float64 : LinearStructureComponent {
-	func inverse() -> Float64 {
+	public func inverse() -> Float64 {
 		return 1 / self
 	}
 	
-	static var zero: Float64 {
+	public static var zero: Float64 {
 		return 0
 	}
 	
-	static var one: Float64 {
+	public static var one: Float64 {
 		return 1
 	}
 	
@@ -98,15 +98,15 @@ extension Float64 : LinearStructureComponent {
 }
 
 extension Float80 : LinearStructureComponent {
-	func inverse() -> Float80 {
+	public func inverse() -> Float80 {
 		return 1 / self
 	}
 	
-	static var zero: Float80 {
+	public static var zero: Float80 {
 		return 0
 	}
 	
-	static var one: Float80 {
+	public static var one: Float80 {
 		return 1
 	}
 	

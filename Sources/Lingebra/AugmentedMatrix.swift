@@ -7,12 +7,12 @@
 
 import Swift
 
-enum Solution<Component: LinearStructureComponent> : CustomStringConvertible {
+public enum Solution<Component: LinearStructureComponent> : CustomStringConvertible {
 	case none
 	case point(Vector<Component>)
 	case space(OffsetSubspace<Component>)
 	
-	var description: String {
+	public var description: String {
 		switch self {
 		case .none: return "no solution"
 		case let .point(p): return p.description
@@ -21,10 +21,10 @@ enum Solution<Component: LinearStructureComponent> : CustomStringConvertible {
 	}
 }
 
-struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConvertible {
-	var matrix: Matrix<Component>
+public struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConvertible {
+	public var matrix: Matrix<Component>
 	
-	var description: String {
+	public var description: String {
 		var result = ""
 		for row in matrix.rows() {
 			for v in row.dropLast() {
@@ -139,7 +139,7 @@ struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConver
 				.reduce(.zero) { $0 + $1 }
 		}
 		
-		var description: String {
+		public var description: String {
 			var result = (results.first ?? .value(.zero)).description
 			for r in results.dropFirst() {
 				let sign = r.value < .zero ? "-" : "+"
@@ -149,11 +149,11 @@ struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConver
 		}
 	}
 	
-	init(matrix: Matrix<Component>, result: Vector<Component>) {
+	public init(matrix: Matrix<Component>, result: Vector<Component>) {
 		self.matrix = Matrix(rows: matrix.rows().enumerated().map { $0.element + [result[$0.offset]] })
 	}
 	
-	init(matrix: Matrix<Component>) {
+	public init(matrix: Matrix<Component>) {
 		self.matrix = matrix
 	}
 	
@@ -172,7 +172,7 @@ struct AugmentedMatrix<Component: LinearStructureComponent> : CustomStringConver
 		return true
 	}
 	
-	func solution() -> Solution<Component> {
+	public func solution() -> Solution<Component> {
 		let rref = matrix.reducedRowEchelonForm()
 		
 		let a = rref.coefficientsMatrix()

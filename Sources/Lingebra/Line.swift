@@ -7,20 +7,20 @@
 
 import Swift
 
-struct Line<Component: LinearStructureComponent> {
-	let space: OffsetSubspace<Component>
+public struct Line<Component: LinearStructureComponent> {
+	public let space: OffsetSubspace<Component>
 	
-	init(pointA: Vector<Component>, pointB: Vector<Component>) {
+	public init(pointA: Vector<Component>, pointB: Vector<Component>) {
 		let direction = pointA - pointB
 		let subspace = Subspace(direction)
 		space = OffsetSubspace(subspace: subspace, offset: pointA)
 	}
 	
-	init(point: Vector<Component>, direction: Vector<Component>) {
+	public init(point: Vector<Component>, direction: Vector<Component>) {
 		space = OffsetSubspace(subspace: Subspace(direction), offset: point)
 	}
 	
-	init(gradient: Component, yIntercept: Component) {
+	public init(gradient: Component, yIntercept: Component) {
 		let o = Vector(Component.zero, yIntercept)
 		
 		let xIntercept = Vector(-yIntercept / gradient, Component.zero)
@@ -35,14 +35,14 @@ struct Line<Component: LinearStructureComponent> {
 		space = OffsetSubspace(subspace: Subspace(dir), offset: o)
 	}
 	
-	init(x: Component) {
+	public init(x: Component) {
 		let o = Vector(x, Component.zero)
 		let d = Vector(Component.zero, Component.one)
 		
 		space = OffsetSubspace(subspace: Subspace(d), offset: o)
 	}
 	
-	init(y: Component) {
+	public init(y: Component) {
 		let o = Vector(Component.zero, y)
 		let d = Vector(Component.one, Component.zero)
 		

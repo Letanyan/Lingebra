@@ -7,11 +7,11 @@
 
 import Swift
 
-struct Matrix<Component: LinearStructureComponent> : Grid {
-	typealias Cell = Component
+public struct Matrix<Component: LinearStructureComponent> : Grid {
+	public typealias Cell = Component
 	
 	//MARK:- Initialisation
-	var cells: [Component] {
+	public var cells: [Component] {
 		didSet {
 			var x = [Component]()
 			_rows = [[Component]]()
@@ -25,10 +25,10 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 			_rows.append(x)
 		}
 	}
-	var rowCount, colCount, count: Int
+	public var rowCount, colCount, count: Int
 	private var _rows: [[Component]]
 	
-	init(rows: [[Component]]) {
+	public init(rows: [[Component]]) {
 		cells = Array(rows.joined())
 		self._rows = rows
 		rowCount = rows.count
@@ -36,7 +36,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		count = rowCount * (colCount == 0 ? 1 : colCount)
 	}
 	
-	init(array: [Component], colCount: Int) {
+	public init(array: [Component], colCount: Int) {
 		cells = array
 		
 		var x = [Component]()
@@ -55,20 +55,20 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		count = array.count
 	}
 	
-	func rows() -> [[Component]] {
+	public func rows() -> [[Component]] {
 		return _rows
 	}
 	
 	//MARK:- Get Matrix
-	func rowMatrix(at index: Int) -> Matrix {
+	public func rowMatrix(at index: Int) -> Matrix {
 		return Matrix(rows: [row(at: index)])
 	}
 	
-	func colMatrix(at index: Int) -> Matrix {
+	public func colMatrix(at index: Int) -> Matrix {
 		return Matrix(array: col(at: index), colCount: 1)
 	}
 	
-	static func rectangularIdentityMatrix(ofRowSize n: Int, andColSize m: Int) -> Matrix {
+	public static func rectangularIdentityMatrix(ofRowSize n: Int, andColSize m: Int) -> Matrix {
 		var result = [[Component]]()
 		for i in 0..<n {
 			var r = [Component](repeating: Component.zero, count: m)
@@ -78,7 +78,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(rows: result)
 	}
 	
-	static func identityMatrix(ofSize n: Int) -> Matrix {
+	public static func identityMatrix(ofSize n: Int) -> Matrix {
 		var result = [[Component]]()
 		for i in 0..<n {
 			var r = [Component](repeating: .zero, count: n)
@@ -88,15 +88,15 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(rows: result)
 	}
 	
-	func isIdentity() -> Bool {
+	public func isIdentity() -> Bool {
 		return self == .rectangularIdentityMatrix(ofRowSize: rowCount, andColSize: colCount)
 	}
 	
-	func augmented(with vector: Vector<Component>) -> AugmentedMatrix<Component> {
+	public func augmented(with vector: Vector<Component>) -> AugmentedMatrix<Component> {
 		return AugmentedMatrix(matrix: self, result: vector)
 	}
 	
-	func splitMatrix(atIndex index: Int) -> (left: Matrix, right: Matrix) {
+	public func splitMatrix(atIndex index: Int) -> (left: Matrix, right: Matrix) {
 		var left = [Component]()
 		var right = [Component]()
 		
@@ -118,7 +118,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return (l, r)
 	}
 	
-	func coefficientsMatrix() -> Matrix {
+	public func coefficientsMatrix() -> Matrix {
 		var result = [Component]()
 		
 		var count = 0
@@ -134,7 +134,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(array: result, colCount: colCount - 1)
 	}
 
-	func constantsColoumn() -> Vector<Component> {
+	public func constantsColoumn() -> Vector<Component> {
 		var result = [Component]()
 		
 		var cnt = 0
@@ -151,7 +151,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 	}
 	
 	//MARK:- Get Minor
-	func minor(at coord: GridCoordinate) -> Matrix {
+	public func minor(at coord: GridCoordinate) -> Matrix {
 		var array = [Component]()
 		
 		for i in 0..<self.count {
@@ -166,27 +166,25 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(array: array, colCount: colCount - 1)
 	}
 	
-	func minor(atRow row: Int, andCol col: Int) -> Matrix {
+	public func minor(atRow row: Int, andCol col: Int) -> Matrix {
 		return minor(at: GridCoordinate(row: row, col: col))
 	}
 	
-	func minor(at linearPosition: Int) -> Matrix {
+	public func minor(at linearPosition: Int) -> Matrix {
 		return minor(at: gridCoordinate(from: linearPosition))
 	}
 	
-	func replace(coloumn: Int, with vector: Vector<Component>) -> Matrix {
+	public func replace(coloumn: Int, with vector: Vector<Component>) -> Matrix {
 		var new = cells
 		
-		for idx in new.startIndex... {
-			if idx % coloumn == 0 {
-				new[idx] = vector[idx / coloumn]
-			}
+		for i in 0..<rowCount {
+			new[i * colCount + coloumn] = vector[i]
 		}
 		
 		return Matrix(array: new, colCount: colCount)
 	}
 	
-	func replace(row: Int, with vector: Vector<Component>) -> Matrix {
+	public func replace(row: Int, with vector: Vector<Component>) -> Matrix {
 		var new = cells
 		let start = row * colCount
 		
@@ -198,31 +196,31 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 	}
 	
 	//MARK:- Arithmetic
-	func determinateValue(of minor: Matrix) -> Component {
+	public static func determinateValue(of matrix: Matrix) -> Component {
 		var result = Component.zero
-		if minor.colCount < 2 && minor.rowCount < 2 {
+		if matrix.colCount < 2 && matrix.rowCount < 2 {
 			return .one
-		} else if minor.colCount == 2 && minor.rowCount == 2 {
-			let a = minor.cell(in: 0, and: 0) ?? .zero
-			let d = minor.cell(in: 1, and: 1) ?? .zero
-			let b = minor.cell(in: 0, and: 1) ?? .zero
-			let c = minor.cell(in: 1, and: 0) ?? .zero
+		} else if matrix.colCount == 2 && matrix.rowCount == 2 {
+			let a = matrix.cell(in: 0, and: 0) ?? .zero
+			let d = matrix.cell(in: 1, and: 1) ?? .zero
+			let b = matrix.cell(in: 0, and: 1) ?? .zero
+			let c = matrix.cell(in: 1, and: 0) ?? .zero
 			
 			return a * d - b * c
 		} else {
-			for (idx, element) in minor.row(at: 0).enumerated() {
-				let mino = minor.minor(at: idx)
+			for (idx, element) in matrix.row(at: 0).enumerated() {
+				let mino = matrix.minor(at: idx)
 				result = result + (idx % 2 == 0 ? .one : -.one) * element * determinateValue(of: mino)
 			}
 			return result
 		}
 	}
 	
-	func determinateValue() -> Component {
-		return determinateValue(of: self)
+	public func determinateValue() -> Component {
+		return Matrix.determinateValue(of: self)
 	}
 	
-	func matrixOfMinorValues() -> Matrix {
+	public func matrixOfMinorValues() -> Matrix {
 		var result = [Component]()
 		
 		for i in 0..<count {
@@ -232,7 +230,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(array: result, colCount: colCount)
 	}
 	
-	func adjugate() -> Matrix {
+	public func adjugate() -> Matrix {
 		var result = [Component]()
 		
 		for i in 0..<colCount {
@@ -243,11 +241,11 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(array: result, colCount: rowCount)
 	}
 	
-	func transposed() -> Matrix {
+	public func transposed() -> Matrix {
 		return adjugate()
 	}
 	
-	func cofactor() -> Matrix {
+	public func cofactor() -> Matrix {
 		var result = [Component]()
 		
 		for i in 0..<rowCount {
@@ -265,7 +263,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Matrix(array: result, colCount: colCount)
 	}
 	
-	func inverseMatrix() -> Matrix {
+	public func inverseMatrix() -> Matrix {
 		var matrix = matrixOfMinorValues()
 		matrix = matrix.cofactor()
 		matrix = matrix.adjugate()
@@ -276,11 +274,11 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 	}
 	
 	//MARK:- Solve
-	func solveFromInverse(for vector: Vector<Component>) -> Matrix {
+	public func solveFromInverse(for vector: Vector<Component>) -> Matrix {
 		return inverseMatrix() * Matrix(array: vector.components, colCount: 1)
 	}
 	
-	func solve(for vector: Vector<Component>) -> Vector<Component> {
+	public func solve(for vector: Vector<Component>) -> Vector<Component> {
 		let d = determinateValue()
 		var result = [Component]()
 		for i in 0..<colCount {
@@ -291,7 +289,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return Vector(result)
 	}
 	
-	func rowEchelonForm() -> Matrix {
+	public func rowEchelonForm() -> Matrix {
 		var result = self
 		
 		for r in 0..<result.rowCount - 1 {
@@ -336,7 +334,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 		return result
 	}
 	
-	func reducedRowEchelonForm() -> Matrix {
+	public func reducedRowEchelonForm() -> Matrix {
 		var result = rowEchelonForm()
 		
 		for i in 0..<result.rowCount {
@@ -376,7 +374,7 @@ struct Matrix<Component: LinearStructureComponent> : Grid {
 }
 
 extension Matrix : CustomStringConvertible {
-	var description: String {
+	public var description: String {
 		get {
 			var result = ""
 			
@@ -395,11 +393,11 @@ extension Matrix : CustomStringConvertible {
 
 //Operators
 extension Matrix : Equatable {
-	static func ==(lhs: Matrix, rhs: Matrix) -> Bool {
+	public static func ==(lhs: Matrix, rhs: Matrix) -> Bool {
 		return lhs.colCount == rhs.colCount && lhs.cells == rhs.cells
 	}
 	
-	static func +(lhs: Matrix, rhs: Matrix) -> Matrix {
+	public static func +(lhs: Matrix, rhs: Matrix) -> Matrix {
 		var array = [Component]()
 		
 		for i in 0..<lhs.count {
@@ -409,7 +407,7 @@ extension Matrix : Equatable {
 		return Matrix(array: array, colCount: lhs.colCount)
 	}
 	
-	static func -(lhs: Matrix, rhs: Matrix) -> Matrix {
+	public static func -(lhs: Matrix, rhs: Matrix) -> Matrix {
 		var array = [Component]()
 		
 		for i in 0..<lhs.count {
@@ -419,7 +417,7 @@ extension Matrix : Equatable {
 		return Matrix(array: array, colCount: lhs.colCount)
 	}
 	
-	static func *(lhs: Matrix, rhs: Matrix) -> Matrix {
+	public static func *(lhs: Matrix, rhs: Matrix) -> Matrix {
 		var array = [Component]()
 		
 		for i in 0..<lhs.rowCount {
@@ -437,7 +435,7 @@ extension Matrix : Equatable {
 	}
 }
 
-func *<Component>(lhs: Matrix<Component>, rhs: Component) -> Matrix<Component> {
+public func *<Component>(lhs: Matrix<Component>, rhs: Component) -> Matrix<Component> {
 	var array = lhs
 	
 	for (idx, cell) in zip(array.cells.startIndex..., array.cells) {
@@ -447,7 +445,7 @@ func *<Component>(lhs: Matrix<Component>, rhs: Component) -> Matrix<Component> {
 	return array
 }
 
-func *<Component>(lhs: Component, rhs: Matrix<Component>) -> Matrix<Component> {
+public func *<Component>(lhs: Component, rhs: Matrix<Component>) -> Matrix<Component> {
 	var array = rhs
 	
 	for (idx, cell) in zip(array.cells.startIndex..., array.cells) {
@@ -458,9 +456,9 @@ func *<Component>(lhs: Component, rhs: Matrix<Component>) -> Matrix<Component> {
 }
 
 extension Matrix : ExpressibleByArrayLiteral {
-	typealias ArrayLiteralElement = [Component]
+	public typealias ArrayLiteralElement = [Component]
 	
-	init(arrayLiteral elements: [Component]...) {
+	public init(arrayLiteral elements: [Component]...) {
 		self = Matrix(rows: elements)
 	}
 }

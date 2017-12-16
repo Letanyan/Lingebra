@@ -7,11 +7,11 @@
 
 import Swift
 
-struct GridCoordinate {
+public struct GridCoordinate {
 	var row, col: Int
 }
 
-protocol Grid {
+public protocol Grid {
 	associatedtype Cell
 	
 	var cells: [Cell] { get }
@@ -39,29 +39,29 @@ protocol Grid {
 
 extension Grid {
 	//MARK: -Conversion
-	func linearPosition(fromRow row: Int, andCol col: Int) -> Int {
+	public func linearPosition(fromRow row: Int, andCol col: Int) -> Int {
 		return (row - 1) * colCount * (col - 1)
 	}
 	
-	func gridCoordinate(from linearPosition: Int) -> GridCoordinate {
+	public func gridCoordinate(from linearPosition: Int) -> GridCoordinate {
 		return GridCoordinate(row: linearPosition / colCount, col: linearPosition % colCount)
 	}
 	
 	//MARK: -Get Element
-	func cell(from coord: GridCoordinate) -> Cell? {
+	public func cell(from coord: GridCoordinate) -> Cell? {
 		return cells[linearPosition(fromRow: coord.row, andCol: coord.col)]
 	}
 	
-	func cell(in row: Int, and col: Int) -> Cell? {
+	public func cell(in row: Int, and col: Int) -> Cell? {
 		return cell(from: GridCoordinate(row: row, col: col))
 	}
 	
-	func cell(from linearPosition: Int) -> Cell? {
+	public func cell(from linearPosition: Int) -> Cell? {
 		return cells[linearPosition]
 	}
 	
 	//MARK: -Get Vectors
-	func row(at index: Int) -> [Cell] {
+	public func row(at index: Int) -> [Cell] {
 		let start = index * colCount
 		var result = [Cell]()
 		for x in start..<(start + colCount) {
@@ -71,7 +71,7 @@ extension Grid {
 		return result
 	}
 	
-	func col(at index: Int) -> [Cell] {
+	public func col(at index: Int) -> [Cell] {
 		var result = [Cell]()
 		
 		for x in 0..<rowCount {
@@ -81,7 +81,7 @@ extension Grid {
 		return result
 	}
 	
-	func rows() -> [[Cell]] {
+	public func rows() -> [[Cell]] {
 		var result = [[Cell]]()
 		
 		for i in 0..<rowCount {
@@ -90,7 +90,7 @@ extension Grid {
 		return result
 	}
 	
-	func cols() -> [[Cell]] {
+	public func cols() -> [[Cell]] {
 		var result = [[Cell]]()
 		for i in 0..<colCount {
 			result.append(col(at: i))
@@ -98,15 +98,15 @@ extension Grid {
 		return result
 	}
 	
-	subscript(row: Int) -> [Cell] {
+	public subscript(row: Int) -> [Cell] {
 		return self.row(at: row)
 	}
 	
-	subscript(col col: Int) -> [Cell] {
+	public subscript(col col: Int) -> [Cell] {
 		return self.col(at: col)
 	}
 	
-	subscript(row: Int, col: Int) -> Cell {
+	public subscript(row: Int, col: Int) -> Cell {
 		return cells[linearPosition(fromRow: row, andCol: col)]
 	}
 }

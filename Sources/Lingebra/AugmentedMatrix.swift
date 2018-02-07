@@ -8,8 +8,11 @@
 import Swift
 
 public enum Solution<Component: LinearStructureComponent> : CustomStringConvertible {
+  /// no solution exists
 	case none
+  /// intersection at a single point in space
 	case point(Vector<Component>)
+  /// intersection in a dimension of degree > 1
 	case space(OffsetSubspace<Component>)
 	
 	public var description: String {

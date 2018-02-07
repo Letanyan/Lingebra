@@ -19,14 +19,18 @@ public struct Vector<Component: LinearStructureComponent> {
 		self.components = values
 	}
 	
+  
+  /// The first element of the vector
 	public var x: Component {
 		return self[0]
 	}
 	
+  /// The second element of the vector
 	public var y: Component {
 		return self[1]
 	}
 	
+  /// The third element of the vector
 	public var z: Component {
 		return self[2]
 	}

@@ -206,30 +206,9 @@ public struct Matrix<Component: LinearStructureComponent> : Grid {
 	}
 	
 	//MARK:- Arithmetic
-	public static func determinateValue(of matrix: Matrix) -> Component {
-		var result = Component.zero
-		if matrix.colCount == 1 && matrix.rowCount == 1 {
-			return matrix.cells[0]
-		} else if matrix.colCount == 2 && matrix.rowCount == 2 {
-			let a = matrix.cell(inRow: 0, andCol: 0) ?? .zero
-			let d = matrix.cell(inRow: 1, andCol: 1) ?? .zero
-			let b = matrix.cell(inRow: 0, andCol: 1) ?? .zero
-			let c = matrix.cell(inRow: 1, andCol: 0) ?? .zero
-			
-			return a * d - b * c
-		} else {
-			for idx in 0..<matrix.colCount {
-				let m = matrix.minor(at: idx).determinateValue()
-				let e = matrix.cells[idx]
-				result = result + (idx & 1 == 0 ? .one : -.one) * e * m
-			}
-			return result
-		}
-	}
-	
 	public func determinateValue() -> Component {
 		let (f, m) = rowEchelonFormWithChanges()
-		
+		print(m)
 		var result = Component.one
 		for i in 0..<m.colCount {
 			result *= m.cells[i * m.colCount + i]

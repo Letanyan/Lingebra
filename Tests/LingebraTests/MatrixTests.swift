@@ -417,6 +417,16 @@ class MatrixTests: XCTestCase {
 		measure {
 			XCTAssertTrue(m.determinateValue() ~~ -5500000000.0)
 		}
-		
 	}
+	
+	func testMatrixOfMinorValues() {
+		let xs: Matrix<Double> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+		
+		let x = xs.matrixOfMinorValues()
+		
+		print(x)
+		
+		XCTAssert(x == [[-3, -6, -3], [-6, -12, -6], [-3, -6, -3]])
+	}
+	
 }
